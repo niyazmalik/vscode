@@ -1,0 +1,75 @@
+C:\Program Files\Git\etc\profile.d\git-prompt.sh
+-------------------------------------------------
+
+
+# ============================================================
+# Bash configuration for MSYS2 / Git
+# ============================================================
+
+# Set TITLEPREFIX based on environment
+if [ -f /etc/profile.d/git-sdk.sh ]; then
+    TITLEPREFIX=SDK-${MSYSTEM#MINGW}
+else
+    TITLEPREFIX=$MSYSTEM
+fi
+
+# Load git-prompt if available
+if [ -f ~/.config/git/git-prompt.sh ]; then
+    . ~/.config/git/git-prompt.sh
+else
+    # Set window title
+    PS1='\[\033]0;'$TITLEPREFIX:$PWD'\007\]'
+
+    # Set custom prompt: Nìaz Malìque :
+    PS1="$PS1"'\[\033[0;31m\]Nìaz Malìque : \[\033[0m\]'
+
+    # Git prompt logic (if not running under Wine)
+    if [ -z "$WINELOADERNOEXEC" ]; then
+        GIT_EXEC_PATH="$(git --exec-path 2>/dev/null)"
+        COMPLETION_PATH="${GIT_EXEC_PATH%/libexec/git-core}"
+        COMPLETION_PATH="${COMPLETION_PATH%/lib/git-core}"
+        COMPLETION_PATH="$COMPLETION_PATH/share/git/completion"
+
+        if [ -f "$COMPLETION_PATH/git-prompt.sh" ]; then
+            . "$COMPLETION_PATH/git-completion.bash"
+            . "$COMPLETION_PATH/git-prompt.sh"
+            PS1="$PS1"'\[\033[36m\]`__git_ps1`\[\033[0m\]'  # Git branch in cyan
+        fi
+    fi
+
+    PS1="$PS1"'\n'  # new line after prompt
+fi
+
+# Make MSYS2 aware of the prompt
+MSYS2_PS1="$PS1"
+
+# Load user-specific bash completions if any
+if [ -z "$WINELOADERNOEXEC" ] && [ -d "$HOME/bash_completion.d" ]; then
+    for c in "$HOME/bash_completion.d/"*.bash; do
+        [ -f "$c" ] && . "$c"
+    done
+fi
+
+----------------------------------------------------------------------------------
+
+
+IN GIT BASH : 
+
+	nano ~/.bashrc
+
+THEN PASTE THIS :
+
+	run() {
+           g++ run.cpp && echo ""
+           ./a.exe
+        }
+
+        dbg() {
+           g++ -g -DDEBUG_MODE run.cpp -o a_debug.exe && echo ""
+           ./a_debug.exe
+        }
+
+THEN EXIT THE FILE AND DO : 
+
+	source ~/.bashrc
+
